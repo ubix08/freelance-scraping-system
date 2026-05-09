@@ -1,6 +1,6 @@
 ---
 description: Run the complete pipeline — qualify, market check, offer, strategy, proposal
-agent: scraper
+agent: agent-4-strategy
 subtask: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Build and test a scraper for a validated job
-agent: scraper
+agent: agent-4-strategy
 subtask: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Write a winning Upwork proposal
-agent: proposal
+agent: agent-5-proposals
 subtask: true
 ---
 

@@ -29,9 +29,12 @@ An AI-augmented freelance system that automatically **discovers**, **qualifies**
 │  LAYER 2 — OpenCode Agents (.opencode/agents/)                  │
 │  LLM-powered. Invoked via /command or @mention.                 │
 │                                                                  │
-│  @analysis  (Haiku, low cost)   — scanning, validation          │
-│  @proposal  (Sonnet, moderate)  — proposal writing, logging      │
-│  @scraper   (Sonnet, moderate)  — site recon, code generation   │
+│  @agent-0-discovery  (Haiku, low cost)   — job discovery        │
+│  @agent-1-harvester  (Haiku, low cost)   — queue qualification  │
+│  @agent-2-intelligence (Sonnet, moderate) — market intelligence │
+│  @agent-3-synthesizer (Sonnet, moderate) — offer synthesis      │
+│  @agent-4-strategy   (Sonnet, moderate)  — scraping strategy    │
+│  @agent-5-proposals  (Sonnet, moderate)  — proposal writing     │
 ├──────────────────────────────────────────────────────────────────┤
 │  LAYER 3 — Context Docs (.opencode/context/freelance/)          │
 │  Reference knowledge base for agents.                           │
@@ -57,9 +60,12 @@ An AI-augmented freelance system that automatically **discovers**, **qualifies**
 | VPS Setup | `scripts/setup-vps.sh` | Bash | One-time infrastructure bootstrap |
 | Cron Installer | `scripts/setup-cron.sh` | Bash | Schedule recurring discovery |
 | OpenCode Config | `opencode.json` | JSON | MCP, instructions |
-| Agent: Analysis | `.opencode/agents/analysis.md` | Markdown | Job scanning agent |
-| Agent: Proposal | `.opencode/agents/proposal.md` | Markdown | Proposal writing agent |
-| Agent: Scraper | `.opencode/agents/scraper.md` | Markdown | Scraper builder agent |
+| Agent: Discovery | `.opencode/agents/agent-0-discovery.md` | Markdown | Job discovery agent |
+| Agent: Harvester | `.opencode/agents/agent-1-harvester.md` | Markdown | Queue qualification agent |
+| Agent: Intelligence | `.opencode/agents/agent-2-intelligence.md` | Markdown | Market intelligence agent |
+| Agent: Synthesizer | `.opencode/agents/agent-3-synthesizer.md` | Markdown | Offer synthesis agent |
+| Agent: Strategy | `.opencode/agents/agent-4-strategy.md` | Markdown | Scraping strategy agent |
+| Agent: Proposals | `.opencode/agents/agent-5-proposals.md` | Markdown | Proposal writing agent |
 | Commands (11) | `.opencode/commands/*.md` | Markdown | Slash commands for workflow |
 | Context Docs (8) | `.opencode/context/freelance/*.md` | Markdown | Agent reference knowledge |
 
@@ -338,45 +344,86 @@ Note: Commands are defined exclusively in `.opencode/commands/*.md` (11 files). 
 
 ## 6. OpenCode Agents
 
-### 6.1 `@analysis` — Job Scanner (Haiku)
+### 6.1 `@agent-0-discovery` — Job Hunter (Haiku)
 
 | Property | Value |
 |----------|-------|
 | Model | `claude-haiku-4-20250514` |
 | Temp | 0.1 |
+| Max Steps | 6 |
+| Mode | Subagent |
+
+**Permissions**:
+| Resource | Access |
+|----------|--------|
+| Bash | `"*": deny` (except `python scripts/discover_jobs.py`, `python scripts/market_research.py`, `python scripts/run_pipeline.py discover`, `cat queue/raw_jobs.json`, `cat queue/collected.json`) |
+| Read | Allow |
+| Edit | Allow |
+| Webfetch | Deny |
+| Websearch | Deny |
+
+**Role**: Run discovery scripts, read output, summarize new jobs found.
+
+### 6.2 `@agent-1-harvester` — Opportunity Harvester (Haiku)
+
+| Property | Value |
+|----------|-------|
+| Model | `claude-haiku-4-20250514` |
+| Temp | 0.1 |
+| Max Steps | 6 |
+| Mode | Subagent |
+
+**Permissions**:
+| Resource | Access |
+|----------|--------|
+| Bash | `"*": deny` (except `python scripts/run_pipeline.py qualify`, `python scripts/run_pipeline.py show`, `cat queue/*.json`) |
+| Read | Allow |
+| Edit | Allow |
+| Webfetch | Deny |
+| Websearch | Deny |
+
+**Role**: Process raw job queues — batch auto-qualify or manual qualification with accept/reject/hold decisions and complexity scoring.
+
+### 6.3 `@agent-2-intelligence` — Market Intelligence (Sonnet)
+
+| Property | Value |
+|----------|-------|
+| Model | `claude-sonnet-4-20250514` |
+| Temp | 0.3 |
 | Max Steps | 8 |
 | Mode | Subagent |
 
 **Permissions**:
 | Resource | Access |
 |----------|--------|
-| Bash | `"*": deny` (except `cat queue/collected.json`, `cat queue/validated.json`) |
+| Bash | `"*": deny` |
 | Read | Allow |
 | Edit | Allow |
-| Webfetch | Deny |
-| Websearch | Deny |
+| Websearch | Allow |
 
-**Role**: Examine collected job postings — extract requirements, assess complexity, validate budget, assign 1-5 confidence scores, save to `queue/validated.json`.
+**Role**: Use Brave Search MCP to validate demand, benchmark pricing, identify differentiators. Update job-tracker.md.
 
-### 6.2 `@proposal` — Proposal Writer (Sonnet)
+### 6.4 `@agent-3-synthesizer` — Offer Synthesizer (Sonnet)
 
 | Property | Value |
 |----------|-------|
 | Model | `claude-sonnet-4-20250514` |
-| Temp | 0.4 |
-| Max Steps | 10 |
+| Temp | 0.3 |
+| Max Steps | 6 |
 | Mode | Subagent |
 
 **Permissions**:
 | Resource | Access |
 |----------|--------|
-| Bash | `"*": deny` (except `cat queue/validated.json`, `mkdir *`) |
+| Bash | `"*": deny` |
 | Read | Allow |
 | Edit | Allow |
+| Webfetch | Deny |
+| Websearch | Deny |
 
-**Role**: Write Upwork proposals with sample-first strategy, Loom scripts, outcome-based pricing. Save to `jobs/{job_id}/proposal_{job_id}.md`.
+**Role**: Convert qualified job + strategy analysis into 3-tier micro-offer with formula-based pricing.
 
-### 6.3 `@scraper` — Scraper Builder (Sonnet)
+### 6.5 `@agent-4-strategy` — Strategy Analyzer (Sonnet)
 
 | Property | Value |
 |----------|-------|
@@ -388,14 +435,32 @@ Note: Commands are defined exclusively in `.opencode/commands/*.md` (11 files). 
 **Permissions**:
 | Resource | Access |
 |----------|--------|
-| Bash | `"*": ask` (except `python scripts/market_research.py *` deny, `pip install *` allow, `mkdir *` allow) |
+| Bash | `"*": ask` (except `python scripts/analyze_site.py *` allow, `pip install *` allow, `mkdir *` allow) |
 | Read | Allow |
 | Edit | Allow |
 | Webfetch | Allow |
 | Glob | Allow |
 | Grep | Allow |
 
-**Role**: Site recon → tool selection → scraper code → test → deliver CSV + README.
+**Role**: Site recon → tool selection → scraper code generation → test → deliver CSV + README.
+
+### 6.6 `@agent-5-proposals` — Proposal Writer (Sonnet)
+
+| Property | Value |
+|----------|-------|
+| Model | `claude-sonnet-4-20250514` |
+| Temp | 0.4 |
+| Max Steps | 10 |
+| Mode | Subagent |
+
+**Permissions**:
+| Resource | Access |
+|----------|--------|
+| Bash | `"*": deny` (except `cat queue/validated.json`, `cat queue/qualified_jobs.json`, `mkdir *`) |
+| Read | Allow |
+| Edit | Allow |
+
+**Role**: Write Upwork proposals with sample-first strategy, Loom scripts, outcome-based pricing. Handle job logging.
 
 ---
 
@@ -405,17 +470,17 @@ Note: Commands are defined exclusively in `.opencode/commands/*.md` (11 files). 
 
 | Command | Agent | Purpose |
 |---------|-------|---------|
-| `/collect` | `analysis` | Run `market_research.py`, report new jobs |
-| `/scan` | `analysis` | Read `collected.json`, assign confidence scores, save to `validated.json` |
-| `/full-cycle` | `analysis` | Collect + scan in one step |
-| `/propos` | `proposal` | Write Upwork proposal for a job |
-| `/log-job` | `proposal` | Track job outcome (won/lost/delivered) |
-| `/scrape` | `scraper` | Build + test a scraper |
-| `/discover` | `analysis` | Run `discover_jobs.py` (Upwork + Freelancer) |
-| `/qualify` | `analysis` | Run `process_queue.py` to auto-qualify raw queue |
-| `/analyze-site` | `scraper` | Run `analyze_site.py` on a target URL |
-| `/market-scan` | `analysis` | Weekly market intelligence via Brave Search |
-| `/full-pipeline` | `scraper` | End-to-end: qualify → market → offer → strategy → proposal |
+| `/collect` | `agent-0-discovery` | Run `market_research.py`, report new jobs |
+| `/scan` | `agent-1-harvester` | Read `collected.json`, assign confidence scores, save to `validated.json` |
+| `/full-cycle` | `agent-0-discovery` | Collect + scan in one step |
+| `/propos` | `agent-5-proposals` | Write Upwork proposal for a job |
+| `/log-job` | `agent-5-proposals` | Track job outcome (won/lost/delivered) |
+| `/scrape` | `agent-4-strategy` | Build + test a scraper |
+| `/discover` | `agent-0-discovery` | Run `discover_jobs.py` (Upwork + Freelancer) |
+| `/qualify` | `agent-1-harvester` | Run `process_queue.py` to auto-qualify raw queue |
+| `/analyze-site` | `agent-4-strategy` | Run `analyze_site.py` on a target URL |
+| `/market-scan` | `agent-2-intelligence` | Weekly market intelligence via Brave Search |
+| `/full-pipeline` | `agent-4-strategy` | End-to-end: qualify → market → offer → strategy → proposal |
 
 ### 7.2 Command File Format
 
@@ -423,7 +488,7 @@ Each command file in `.opencode/commands/` uses YAML frontmatter:
 ```yaml
 ---
 description: Human-readable description
-agent: analysis|proposal|scraper
+agent: agent-0-discovery|agent-1-harvester|agent-2-intelligence|agent-3-synthesizer|agent-4-strategy|agent-5-proposals
 subtask: true
 ---
 Template body... ($ARGUMENTS for user input)
@@ -615,4 +680,4 @@ Heavy protection (Akamai, DataDome, PerimeterX) → DECLINE
 
 ---
 
-*End of Master Specification. 33 files reviewed across 3 layers: 7 scripts, 3 agents, 11 commands, 8 context docs, 2 config files, 2 shell scripts, 2 deployment/meta docs.*
+*End of Master Specification. 36 files reviewed across 3 layers: 7 scripts, 6 agents, 11 commands, 8 context docs, 2 config files, 2 shell scripts, 2 deployment/meta docs.*

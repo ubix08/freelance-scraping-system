@@ -1,6 +1,6 @@
 ---
 description: Weekly market intelligence scan using Brave Search MCP
-agent: analysis
+agent: agent-2-intelligence
 subtask: true
 ---
 

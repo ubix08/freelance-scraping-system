@@ -1,6 +1,6 @@
 ---
 description: Collect scraping jobs from Upwork
-agent: analysis
+agent: agent-0-discovery
 subtask: true
 ---
 

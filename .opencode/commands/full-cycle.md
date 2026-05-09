@@ -1,6 +1,6 @@
 ---
 description: Collect + scan in one command
-agent: analysis
+agent: agent-0-discovery
 subtask: true
 ---
 

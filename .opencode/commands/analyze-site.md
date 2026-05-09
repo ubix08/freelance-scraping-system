@@ -1,6 +1,6 @@
 ---
 description: Analyze a target URL to determine scraping strategy and tool selection
-agent: scraper
+agent: agent-4-strategy
 subtask: true
 ---
 
@@ -18,5 +18,4 @@ After the script runs, read the JSON output and produce:
 4. The exact OpenCode prompt to generate the scraper
 5. Price floor based on complexity
 
-URL to analyze:
-$ARGUMENTS
+URL to analyze: $ARGUMENTS

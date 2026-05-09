@@ -1,6 +1,6 @@
 ---
 description: Discover new scraping jobs from Upwork RSS + Freelancer API
-agent: analysis
+agent: agent-0-discovery
 subtask: true
 ---
 

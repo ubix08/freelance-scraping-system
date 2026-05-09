@@ -1,6 +1,6 @@
 ---
 description: Analyze collected jobs: requirements, complexity, deliverables, budget
-agent: analysis
+agent: agent-1-harvester
 subtask: true
 ---
 

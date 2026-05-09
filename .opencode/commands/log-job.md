@@ -1,6 +1,6 @@
 ---
 description: Track job outcome (won/lost/delivered)
-agent: proposal
+agent: agent-5-proposals
 subtask: true
 ---
 

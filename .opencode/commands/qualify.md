@@ -1,6 +1,6 @@
 ---
 description: Auto-qualify raw job queue — accept, reject, or hold
-agent: analysis
+agent: agent-1-harvester
 subtask: true
 ---
 
