@@ -10,44 +10,6 @@
       }
     }
   },
-  "command": {
-    "collect": {
-      "description": "Collect scraping jobs from Upwork (Layer 1)",
-      "template": "Run python scripts/market_research.py. Report the count of new jobs found. Do not analyze.",
-      "agent": "analysis",
-      "subtask": true
-    },
-    "scan": {
-      "description": "Analyze collected jobs: requirements, complexity, deliverables, budget",
-      "template": "Read queue/collected.json. Examine every un-analyzed job. For each: 1) what exactly needs scraping, 2) complexity (low/medium/high), 3) deliverables expected, 4) budget sanity. Assign confidence score (1-5). Save to queue/validated.json with reasoning. Show a ranked summary table.",
-      "agent": "analysis",
-      "subtask": true
-    },
-    "propos": {
-      "description": "Write a winning Upwork proposal for a validated job",
-      "template": "Write an Upwork proposal for this job: $ARGUMENTS. Check queue/validated.json first if the job was pre-analyzed. Include: 1) opening that references their exact problem, 2) sample-first strategy — what small sample to run and include, 3) technical approach (2 sentences), 4) clear pricing + timeline, 5) 60-90s Loom video script, 6) one CTA question. Save to jobs/{job_id}/proposal_{job_id}.md. No templates — each proposal must reference the specific job.",
-      "agent": "proposal",
-      "subtask": true
-    },
-    "scrape": {
-      "description": "Build and test a scraper for a validated job",
-      "template": "Build a scraper for: $ARGUMENTS. Check queue/validated.json for prior analysis. Recon the target site with webfetch (tech stack, anti-bot, pagination). Choose tool (BS4 / Playwright / curl_cffi). Write scraper_{job_id}.py. Run it. Fix errors. Deliver output_{job_id}.csv + README_{job_id}.md.",
-      "agent": "scraper",
-      "subtask": true
-    },
-    "full-cycle": {
-      "description": "Collect + scan in one command",
-      "template": "Run python scripts/market_research.py. Then read queue/collected.json and scan every job: requirements, complexity, deliverables, budget, confidence scores. Save to validated.json. Show ranked summary.",
-      "agent": "analysis",
-      "subtask": true
-    },
-    "log-job": {
-      "description": "Track job outcome (won/lost/delivered)",
-      "template": "Log: $ARGUMENTS. Format: job_id | title | budget | connects_spent | status | notes. Append to queue/stats.json. Show totals: won, revenue, avg price, win rate.",
-      "agent": "proposal",
-      "subtask": true
-    }
-  },
   "instructions": [
     "AGENTS.md"
   ]

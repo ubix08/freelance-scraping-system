@@ -1,6 +1,8 @@
-# /analyze-site — Agent 4: Analyze target URL
-
-@.opencode/context/freelance/agent-4-strategy.md
+---
+description: Analyze a target URL to determine scraping strategy and tool selection
+agent: scraper
+subtask: true
+---
 
 Analyze the target site and determine scraping strategy.
 

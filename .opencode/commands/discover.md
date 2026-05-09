@@ -1,9 +1,10 @@
-# /discover — Agent 0: Hunt new jobs
+---
+description: Discover new scraping jobs from Upwork RSS + Freelancer API
+agent: analysis
+subtask: true
+---
 
-@.opencode/context/freelance/00-system-overview.md
-@.opencode/context/freelance/agent-0-discovery.md
-
-Run job discovery. Execute:
+Run job discovery:
 ```bash
 source ~/freelance-env/bin/activate && python scripts/discover_jobs.py
 ```
